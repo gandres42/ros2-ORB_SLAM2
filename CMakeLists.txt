@@ -21,8 +21,7 @@ find_package(OpenCV REQUIRED)
 find_package(ORB_SLAM2 REQUIRED)
 
 add_executable(mono 
-  src/monocular/mono.cpp
-  src/monocular/monocular-slam-node.cpp
+  src/main.cpp
 )
 target_include_directories(mono PRIVATE
   ${OpenCV_INCLUDE_DIRS}
@@ -51,5 +50,8 @@ endif()
 
 install(TARGETS mono
   DESTINATION lib/${PROJECT_NAME})
+
+install(DIRECTORY config
+  DESTINATION share/${PROJECT_NAME})
 
 ament_package()

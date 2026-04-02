@@ -52,7 +52,7 @@ Run the monocular SLAM node
 
     $ ros2 run ros2_orbslam mono PATH_TO_VOCABULARY PATH_TO_YAML_CONFIG_FILE
 
-You can find the vocabulary file in the ORB_SLAM2 repository (e.g. `ORB_SLAM2/Vocabulary/ORBvoc.txt`), while the config file can be found within this repo (e.g. `ros2-ORB_SLAM2/src/monocular/TUM1.yaml` for monocular SLAM).
+You can find the vocabulary file in the ORB_SLAM2 repository (e.g. `ORB_SLAM2/Vocabulary/ORBvoc.txt`), while the config file can be found within this repo (e.g. `ros2-ORB_SLAM2/config/TUM1.yaml` for monocular SLAM).
 
 This node subscribes to the ROS2 topic `camera` and waits for Image messages.
 For example you can stream frames from your laptop webcam using:
