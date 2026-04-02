@@ -16,7 +16,6 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
-find_package(message_filters REQUIRED)
 find_package(Pangolin REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(ORB_SLAM2 REQUIRED)
@@ -25,21 +24,32 @@ add_executable(mono
   src/monocular/mono.cpp
   src/monocular/monocular-slam-node.cpp
 )
-ament_target_dependencies(mono rclcpp sensor_msgs cv_bridge OpenCV ORB_SLAM2 Pangolin)
-
-add_executable(rgbd 
-  src/rgbd/rgbd.cpp
-  src/rgbd/rgbd-slam-node.cpp
+target_include_directories(mono PRIVATE
+  ${OpenCV_INCLUDE_DIRS}
+  ${Pangolin_INCLUDE_DIRS}
 )
-ament_target_dependencies(rgbd rclcpp sensor_msgs cv_bridge message_filters OpenCV ORB_SLAM2 Pangolin)
 
-add_executable(stereo 
-  src/stereo/stereo.cpp
-  src/stereo/stereo-slam-node.cpp
+target_link_libraries(mono PRIVATE
+  rclcpp::rclcpp
+  sensor_msgs::sensor_msgs_library
+  cv_bridge::cv_bridge
+  ${OpenCV_LIBS}
+  ${ORB_SLAM2_LIBRARIES}
+  ${Pangolin_LIBRARIES}
 )
-ament_target_dependencies(stereo rclcpp sensor_msgs cv_bridge message_filters OpenCV ORB_SLAM2 Pangolin)
 
-install(TARGETS mono rgbd stereo
+# Treat external ORB_SLAM2 headers as system includes to reduce third-party warning noise.
+target_include_directories(mono SYSTEM PRIVATE ${ORB_SLAM2_INCLUDE_DIRS})
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  target_compile_options(mono PRIVATE
+    -Wno-overloaded-virtual
+    -Wno-deprecated-declarations
+    -Wno-pedantic
+  )
+endif()
+
+install(TARGETS mono
   DESTINATION lib/${PROJECT_NAME})
 
 ament_package()

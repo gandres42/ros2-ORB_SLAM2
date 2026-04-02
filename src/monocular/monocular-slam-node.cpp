@@ -1,8 +1,6 @@
 #include "monocular-slam-node.hpp"
 
-#include<opencv2/core/core.hpp>
-
-using std::placeholders::_1;
+#include <opencv2/core/core.hpp>
 
 MonocularSlamNode::MonocularSlamNode(ORB_SLAM2::System* pSLAM)
 :   Node("orbslam"), 
@@ -16,6 +14,10 @@ MonocularSlamNode::MonocularSlamNode(ORB_SLAM2::System* pSLAM)
 
 MonocularSlamNode::~MonocularSlamNode()
 {
+    if (m_SLAM == nullptr) {
+        return;
+    }
+
     // Stop all threads
     m_SLAM->Shutdown();
 
@@ -25,16 +27,19 @@ MonocularSlamNode::~MonocularSlamNode()
 
 void MonocularSlamNode::GrabImage(const ImageMsg::SharedPtr msg)
 {
-    // Copy the ros image message to cv::Mat.
+    cv_bridge::CvImagePtr cv_image;
+
+    // Copy the ROS image message to cv::Mat.
     try
     {
-        m_cvImPtr = cv_bridge::toCvCopy(msg);
+        cv_image = cv_bridge::toCvCopy(msg);
     }
-    catch (cv_bridge::Exception& e)
+    catch (const cv_bridge::Exception& e)
     {
         RCLCPP_ERROR(this->get_logger(), "cv_bridge exception: %s", e.what());
         return;
     }
-    
-    cv::Mat Tcw = m_SLAM->TrackMonocular(m_cvImPtr->image, msg->header.stamp.sec);
+
+    const double timestamp = rclcpp::Time(msg->header.stamp).seconds();
+    m_SLAM->TrackMonocular(cv_image->image, timestamp);
 }

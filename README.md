@@ -10,11 +10,10 @@ If you want to integrate ORB_SLAM2 inside your ROS2 system, consider trying [thi
  - [ORB_SLAM2](https://github.com/raulmur/ORB_SLAM2)
  - [OpenCV3](https://docs.opencv.org/3.0-beta/doc/tutorials/introduction/linux_install/linux_install.html)
  - [vision_opencv](https://github.com/ros-perception/vision_opencv/tree/ros2)
- - [message_filters](https://github.com/ros2/message_filters)
 
 Note: The `vision_opencv` package requires OpenCV3. Make sure to build ORB_SLAM2 with the same OpenCV version otherwise strange run errors could appear.
 
-The `message_filters` package is not required if you want to use only the Monocular SLAM node. 
+This package is structured as a monocular-only ROS2 wrapper for ORB_SLAM2.
 
 
 ### Build
@@ -59,13 +58,3 @@ This node subscribes to the ROS2 topic `camera` and waits for Image messages.
 For example you can stream frames from your laptop webcam using:
 
     $ ros2 run image_tools cam2image -t camera
-
-The other nodes can be run in a very similar way.
-
-You can run the `rgbd` node by using 
-
-    $ ros2 run ros2_orbslam rgbd PATH_TO_VOCABULARY PATH_TO_YAML_CONFIG_FILE
-
-You can run the `stereo` node by using 
-
-    $ ros2 run ros2_orbslam stereo PATH_TO_VOCABULARY PATH_TO_YAML_CONFIG_FILE BOOL_RECTIFY

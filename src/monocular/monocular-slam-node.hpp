@@ -1,5 +1,5 @@
-#ifndef __MONOCULAR_SLAM_NODE_HPP__
-#define __MONOCULAR_SLAM_NODE_HPP__
+#ifndef MONOCULAR_SLAM_NODE_HPP_
+#define MONOCULAR_SLAM_NODE_HPP_
 
 
 #include "rclcpp/rclcpp.hpp"
@@ -7,10 +7,7 @@
 
 #include <cv_bridge/cv_bridge.hpp>
 
-#include"System.h"
-#include"Frame.h"
-#include "Map.h"
-#include "Tracking.h"
+#include "System.h"
 
 
 class MonocularSlamNode : public rclcpp::Node
@@ -23,13 +20,11 @@ public:
 private:
     using ImageMsg = sensor_msgs::msg::Image;
 
-    void GrabImage(const sensor_msgs::msg::Image::SharedPtr msg);
+    void GrabImage(const ImageMsg::SharedPtr msg);
 
     ORB_SLAM2::System* m_SLAM;
 
-    cv_bridge::CvImagePtr m_cvImPtr;
-
-    rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr m_image_subscriber;
+    rclcpp::Subscription<ImageMsg>::SharedPtr m_image_subscriber;
 };
 
-#endif
+#endif  // MONOCULAR_SLAM_NODE_HPP_

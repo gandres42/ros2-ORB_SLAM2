@@ -1,19 +1,16 @@
-#include<iostream>
-#include<algorithm>
-#include<fstream>
-#include<chrono>
+#include <iostream>
 
 #include "rclcpp/rclcpp.hpp"
 #include "monocular-slam-node.hpp"
 
-#include"System.h"
+#include "System.h"
 
 
 int main(int argc, char **argv)
 {
-    if(argc < 3)
+    if (argc < 3)
     {
-        std::cerr << "\nUsage: ros2 run orbslam mono path_to_vocabulary path_to_settings" << std::endl;        
+        std::cerr << "\nUsage: ros2 run ros2_orbslam mono path_to_vocabulary path_to_settings" << std::endl;
         return 1;
     }
 
