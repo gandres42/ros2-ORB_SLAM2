@@ -7,27 +7,11 @@
 
 class MonocularSlamNode : public rclcpp::Node
 {
-public:
-    explicit MonocularSlamNode(ORB_SLAM2::System* slam) : Node("orbslam"), slam_(slam)
-    {
-        image_subscriber_ = this->create_subscription<ImageMsg>("camera", 10, std::bind(&MonocularSlamNode::GrabImage, this, std::placeholders::_1));
-    }
-
-    ~MonocularSlamNode() override
-    {
-        if (slam_ == nullptr) {
-            return;
-        }
-
-        slam_->Shutdown();
-        slam_->SaveKeyFrameTrajectoryTUM("KeyFrameTrajectory.txt");
-    }
-
 private:
-    using ImageMsg = sensor_msgs::msg::Image;
+    ORB_SLAM2::System* slam;
+    rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_subscriber_;
 
-    void GrabImage(const ImageMsg::SharedPtr msg)
-    {
+    void GrabImage(const sensor_msgs::msg::Image::SharedPtr msg) {
         cv_bridge::CvImagePtr cv_image;
 
         try {
@@ -38,15 +22,25 @@ private:
         }
 
         const double timestamp = rclcpp::Time(msg->header.stamp).seconds();
-        slam_->TrackMonocular(cv_image->image, timestamp);
+        this->slam->TrackMonocular(cv_image->image, timestamp);
     }
 
-    ORB_SLAM2::System* slam_;
-    rclcpp::Subscription<ImageMsg>::SharedPtr image_subscriber_;
+
+public:
+    explicit MonocularSlamNode(ORB_SLAM2::System* slam) : Node("orbslam"), slam(slam) {
+        image_subscriber_ = this->create_subscription<sensor_msgs::msg::Image>("camera", 10, std::bind(&MonocularSlamNode::GrabImage, this, std::placeholders::_1));
+    }
+
+    ~MonocularSlamNode() override {
+        if (slam == nullptr) {
+            return;
+        }
+        this->slam->Shutdown();
+        this->slam->SaveKeyFrameTrajectoryTUM("KeyFrameTrajectory.txt");
+    }
 };
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     if (argc < 3) {
         std::cerr << "\nUsage: ros2 run ros2_orbslam mono path_to_vocabulary path_to_settings" << std::endl;
         return 1;
