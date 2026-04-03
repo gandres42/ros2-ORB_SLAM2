@@ -28,7 +28,7 @@ private:
 
 public:
     explicit MonocularSlamNode(ORB_SLAM2::System* slam) : Node("orbslam"), slam(slam) {
-        image_subscriber_ = this->create_subscription<sensor_msgs::msg::Image>("camera", 10, std::bind(&MonocularSlamNode::GrabImage, this, std::placeholders::_1));
+        image_subscriber_ = this->create_subscription<sensor_msgs::msg::Image>("/BlueROV2/video", 10, std::bind(&MonocularSlamNode::GrabImage, this, std::placeholders::_1));
     }
 
     ~MonocularSlamNode() override {
@@ -36,7 +36,6 @@ public:
             return;
         }
         this->slam->Shutdown();
-        this->slam->SaveKeyFrameTrajectoryTUM("KeyFrameTrajectory.txt");
     }
 };
 
